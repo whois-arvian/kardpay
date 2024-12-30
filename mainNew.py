@@ -49,18 +49,27 @@ def generate_keyword():
     return random.choice(consonants) + random.choice(vowels)
 
 def get_random_domain(proxy_dict):
+    urls = [
+        "https://email-fake.com/search.php?key={}",
+        "https://generator.email/search.php?key={}",
+        "https://emailfake.com/search.php?key={}",
+        "https://generator.email/search.php?key={}"
+    ]
     keyword = generate_keyword()
-    #url = f"https://emailfake.com/search.php?key={keyword}"
-    url = f"https://generator.email/search.php?key={keyword}"
-    
-    try:
-        resp = requests.get(url, proxies=proxy_dict, timeout=60)
-        resp.raise_for_status()
-        domains = resp.json()
-        return random.choice(domains) if domains else None
-    except Exception as e:
-        print(f"{get_log_prefix()} {Fore.LIGHTRED_EX}Error fetching domain: {str(e)}{Style.RESET_ALL}")
-        return None
+
+    for url_template in urls:
+        url = url_template.format(keyword)
+        try:
+            resp = requests.get(url, proxies=proxy_dict, timeout=60)
+            resp.raise_for_status()
+            domains = resp.json()
+            if domains:
+                return random.choice(domains)
+        except Exception as e:
+            print(f"{get_log_prefix()} {Fore.LIGHTRED_EX}Error fetching domain from {url}: {str(e)}{Style.RESET_ALL}")
+
+    print(f"{get_log_prefix()} {Fore.LIGHTRED_EX}All domain fetch attempts failed.{Style.RESET_ALL}")
+    return None
 
 def generate_username():
     first_name = names.get_first_name().lower()
