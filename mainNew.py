@@ -50,15 +50,15 @@ def generate_keyword():
 
 def get_random_domain(proxy_dict):
     urls = [
-        "https://email-fake.com/search.php?key=",
-        "https://generator.email/search.php?key=",
-        "https://emailfake.com/search.php?key=",
-        "https://generator.email/search.php?key="
+        "https://email-fake.com/search.php?key={}",
+        "https://generator.email/search.php?key={}",
+        "https://emailfake.com/search.php?key={}",
+        "https://generator.email/search.php?key={}"
     ]
     keyword = generate_keyword()
 
     for url_template in urls:
-        url = url_template . keyword
+        url = url_template.format(keyword)
         try:
             resp = requests.get(url, proxies=proxy_dict, timeout=60)
             resp.raise_for_status()
